@@ -204,7 +204,7 @@ void Change_One_Video(unsigned int Out_Channel,unsigned int Input_Channel) //Ã‡Ã
 	//Up_Config_One_Data(Out_Channel,Input_Channel);
         int data;
 
-	printf("%s-01:IN %d to OUT %d\n",__func__,Input_Channel,Out_Channel);
+	//printf("%s-01:IN %d to OUT %d\n",__func__,Input_Channel,Out_Channel);
 	data =Out_Channel<<16;
 	data |=Input_Channel;
 
@@ -270,15 +270,15 @@ int Matrix_init(void)
 		exit(-1);
 	
 	}
-printf("%s-02\n",__func__);
+//printf("%s-02\n",__func__);
 	iMtxState=sw_info->iMtxState;
 	iMax_Input_Num=sw_info->input_maxnum;
 	iMax_Output_Num=sw_info->output_maxnum;
 	DEVICE_NAME=sw_info->device_name;
 	DEVICE_NAME_STATIC=sw_info->device_name_static;
-printf("%s-03\n",__func__);
+//printf("%s-03\n",__func__);
 	LoadDataFromFile();
-printf("%s-04\n",__func__);
+//printf("%s-04\n",__func__);
 	DCS_ALL_Init();	
 	Change_All();
 	return 0;

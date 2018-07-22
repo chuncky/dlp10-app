@@ -100,7 +100,7 @@ void * main_process(void* arg)
 		timerprocess();
 
 
-		usleep(50000); //100ms
+		usleep(1000); //10ms
 		//printf("%s-01\n",__func__);
 	}
 

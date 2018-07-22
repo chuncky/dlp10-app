@@ -37,6 +37,14 @@ char sendbuf[1024];
 int checkcommand(char * buf,int lenth)
 {
 	int comlen;
+
+	if((buf[0] == iMtxState[INDEX_MACHINE_ID])||(buf[0] == 0x2a)){
+		if(buf[lenth-1]=='!')
+			return 0;
+		return -4;
+
+	}
+
 	if (buf[0]!=BATCHCMDSTR_STARTCHAR)
 		return -1;
 	if((buf[1]!=0x2a)&&(buf[1]!=iMtxState[INDEX_MACHINE_ID]))
@@ -50,6 +58,73 @@ int checkcommand(char * buf,int lenth)
 	return 0;
 
 }
+
+int parse_ascii_cmd(char * Buffer_Data,int lenth,char *sbuf)
+{
+	int len;
+	u16 i;
+	char * pbuf;
+	u32 tmp = 0;
+	len=0;
+	switch (lenth)
+	{
+		case 2: 
+				sbuf[0]=0x23;
+				sbuf[1]=iMtxState[INDEX_MACHINE_ID];
+				if((iMax_Input_Num>=100)||(iMax_Output_Num>=100))
+				{
+					sbuf[2]=(iMax_Output_Num*4/256);
+					sbuf[3]=(iMax_Output_Num*4%256);
+				}
+				else
+				{
+					sbuf[2]=(iMax_Output_Num*3/256);
+					sbuf[3]=(iMax_Output_Num*3%256);					
+				}
+				sbuf[4]=0x1E;
+				pbuf=sbuf+5;
+				len=5;
+    				for (i=0; i<iMax_Output_Num; i++)//MAX_OUTPUT_NUMÂ·Êä³ö
+				{
+		
+					tmp=sprintf(pbuf,"%02d[",(iMtxState[i]+1));
+					len+=tmp;
+					pbuf+=tmp;
+				}
+				sbuf[len]=0xff;
+				len++;
+				sbuf[len]='\0';
+				//printf("%s-cmd=%d,len=%d,--%s\n",__func__,cmd,len,(sbuf+5));
+				return len;
+
+			break;//A!
+		case 3: 
+			sbuf[0]=iMtxState[INDEX_MACHINE_ID];
+			sbuf[1]=0x3a;
+			pbuf=sbuf+2;
+  			len=sprintf(pbuf,"%s", DEVICE_NAME);
+			len=len+2;
+			sbuf[len]='\0';
+			printf("%s--%s\n",__func__,sbuf);
+			return len;
+			break;//A?!
+
+		case 4: return -1; break;//A16!
+		case 7: return -1; break;//A16[16!
+		case 8: 
+			return -1;
+			break;//A<ID:B>!
+							
+		default: 
+			pbuf=sbuf;
+			len=sprintf(pbuf,"UDP command error");
+			return len;
+		}	
+
+
+}
+
+
 
 int parse_status_cmd(char * Buffer_Data,int lenth,char *sbuf)
 {
@@ -195,18 +270,25 @@ void * udpprocess(void* arg)
         	buffer[n] = '\0';
         	//printf("receive data: %s\n",buffer);
 		if(matrixlock){
+
 			ret=checkcommand(buffer,n);
 			if (ret<0){
         			datagramSocket.sendTo("Command error",13,sender);
 				continue;
 			}
 			//printf("receive data: %s\n",buffer);
-			ret=parse_status_cmd(buffer,n,sendbuf);
+			if(buffer[0]==BATCHCMDSTR_STARTCHAR){
+				ret=parse_status_cmd(buffer,n,sendbuf);
+			}
+			else // buf[0] == iMtxState[INDEX_MACHINE_ID])||(buf[0] == 0x2a)
+			{
+				ret=parse_ascii_cmd(buffer,n,sendbuf);
+			}
 			if (ret<0){
 				datagramSocket.sendTo("OK",2,sender);
 			}
 			else 
-				datagramSocket.sendTo(sendbuf,ret,sender);
+				datagramSocket.sendTo(sendbuf,ret,sender);	
 			Write_Cmd_FIFO(buffer,n,&UDPFIFO);
 		}
 		else{

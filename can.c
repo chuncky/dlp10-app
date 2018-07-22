@@ -1319,6 +1319,7 @@ int can_init(void)
 {
 	int family = PF_CAN, type = SOCK_RAW, proto = CAN_RAW;
 	struct ifreq ifr;
+	struct can_filter rfilter[1];
 	struct sockaddr_can addr;
 	can_set_bitrate("can0", 500000);
 	can_do_start("can0");
@@ -1344,6 +1345,13 @@ int can_init(void)
 		printf("ERROR");
 		return 1;
 	}
+ 	//rfilter[0].can_id = 0x1;
+	//rfilter[0].can_mask = CAN_SFF_MASK;
+	//setsockopt(s[0], SOL_CAN_RAW, CAN_RAW_FILTER, &rfilter, sizeof(rfilter));
+
+
+
+
 	return 0;
 }
 
@@ -1358,17 +1366,18 @@ void * candata_receive_process(void* arg)
 			printf("read error !! \n");
 		}
 		//printf("can0 received %d datas\n",ret);
-
-		//printf("\n CAN0 receive id = %d", Rx_frame.can_id);
-		//printf("\n CAN0 receive dlc = %d", Rx_frame.can_dlc);
-		printf("CAN0 receive Data: ");
-		
-		for (i = 0; i < Rx_frame.can_dlc; i++){
-			printf(" 0x%02x", Rx_frame.data[i]);
-		}
-		printf("\n");
+		//printf("\n CAN0 receive dlc = %d\n", Rx_frame.can_dlc);
+		//printf("CAN0 receive Data: ");
+		if(Rx_frame.can_id==18){
+			//printf("CAN0 receive id = %d\n", Rx_frame.can_id);
+			//for (i = 0; i < Rx_frame.can_dlc; i++){
+			//	printf(" 0x%02x", Rx_frame.data[i]);
+			//}
+			//printf("\n");
+			continue;
+		}		
 		Write_Cmd_FIFO((u8 *)Rx_frame.data,Rx_frame.can_dlc,&COM2_CAN_FIFO);
-                usleep(1000);
+                //usleep(1000);
 	}
 
 }
@@ -1425,7 +1434,7 @@ void CAN_proc_rs_State(void)
 	unsigned char tmp = 0;
 	unsigned char j = 0;
 
-printf("%s:iMax_Output_Num=%d,INDEX_MACHINE_ID=%d\n",__func__,iMax_Output_Num,INDEX_MACHINE_ID);
+//printf("%s:iMax_Output_Num=%d,INDEX_MACHINE_ID=%d\n",__func__,iMax_Output_Num,INDEX_MACHINE_ID);
 
 #if 0
 		TxMessage.StdId=SEND_ID_SELF;
@@ -1464,7 +1473,7 @@ printf("%s:iMax_Output_Num=%d,INDEX_MACHINE_ID=%d\n",__func__,iMax_Output_Num,IN
 			CAN_Transmit(s[0],&frame);
 			len -= tmp;
 			//delay_ms(8);
-			usleep(8000);
+			usleep(1000);
 
 			
 		}

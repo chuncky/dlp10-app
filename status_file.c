@@ -137,8 +137,8 @@ int statustochar(char *status, unsigned char * iStatus,char lenth)
 		i++;
 	}
    	//status[offset-1]='\n';
-    	printf(status);
-	printf("\n");
+    	//printf(status);
+	//printf("\n");
 	return i;
 }
 int load_statusfile(void)
