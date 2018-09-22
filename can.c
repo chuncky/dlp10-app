@@ -1473,7 +1473,7 @@ void CAN_proc_rs_State(void)
 			CAN_Transmit(s[0],&frame);
 			len -= tmp;
 			//delay_ms(8);
-			usleep(1000);
+			//usleep(1000);
 
 			
 		}
