@@ -94,12 +94,10 @@ void * main_process(void* arg)
 		 handle_ctl_cmd(&uart3_info);
 		 handle_ctl_cmd(&uart4_info);
 		 handle_ctl_cmd(&uart5_info);
-		 handle_ctl_cmd(&net_info);
+		 //handle_ctl_cmd(&net_info);
 		handle_ctl_cmd(&uart2_can_info);
-		handle_ctl_cmd(&udp_info);
+		//handle_ctl_cmd(&udp_info);
 		timerprocess();
-
-
 		usleep(1000); //10ms
 		//printf("%s-01\n",__func__);
 	}

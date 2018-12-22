@@ -19,6 +19,7 @@
 //}
 
 char pStatus[256]; 
+
 int prepare_netstatus(void)
 {
 	int lenth;
@@ -101,23 +102,41 @@ void CTCPServer::run()
 
 		//printf( "acceptConnection: 0x%d \n", &streamSocket );
 
-		char* pCommand = new char[256];
+		char* pCommand = new char[512];
 
 		int ret;
+		int i;
 
-		for( int i = 0; i < 256; i ++ )
+		for( i = 0; i < 512; i ++ )
 			*(pCommand + i) = 0;
 
 //		unsigned char command[16] = {0};
-		int count = streamSocket.receiveBytes( pCommand, 256 );
-		printf( "\n RECEIVE:%d|(0x%x,0x%x,0x%x,0x%x,0x%x,0x%x)\n", count,pCommand[0],pCommand[1],pCommand[2],pCommand[3],pCommand[4],pCommand[5]);
-
-		Write_Cmd_FIFO(pCommand,count,&NETFIFO);
+		int count = streamSocket.receiveBytes( pCommand, 512 );
+		printf( "\n RECEIVE:%d|(",count);
+		for( i = 0; i < count; i ++ )
+			printf( "0x%x,", pCommand[i]);
+		printf(")\n");
 
 		ret=select_checkcommand(pCommand);
 
-		if (ret==-1)
-			count = streamSocket.sendBytes( "RETURN", 6 );
+		if (ret==-1){
+
+			ret=checkcommand(pCommand,count);
+			if(pCommand[0]==BATCHCMDSTR_STARTCHAR){
+				ret=parse_status_cmd(pCommand,count,pStatus);
+			}
+			else // buf[0] == iMtxState[INDEX_MACHINE_ID])||(buf[0] == 0x2a)
+			{
+				ret=parse_ascii_cmd(pCommand,count,pStatus);
+			}
+
+			if (ret==0){
+				count = streamSocket.sendBytes( "RETURN OK", 9 );
+			}
+			else
+				count = streamSocket.sendBytes( pStatus, ret );
+
+		}
 		else if (ret== 0)
 		{
 			//printf("ctcpserver-02\n");

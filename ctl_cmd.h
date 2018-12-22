@@ -3,7 +3,9 @@
 #include "uart.h"
 typedef enum {DISABLE = 0, ENABLE = !DISABLE} FunctionalState;
 
-
+#define COMMAND_HEAD_LEN 4//´®¿Ú16½øÖÆÃüÁî¸ñÊ½ÖÐ´ú±íÆðÊ¼·û£¬Éè±¸ID£¬Êý¾Ý¿é³¤¶È¹²Õ¼¾ÝµÄ×Ö½Ú¸öÊý
+#define COMMAND_TYPE_LEN 1//´®¿Ú16½øÖÆÃüÁî¸ñÊ½ÖÐ´ú±íÃüÁîÖÖÀàÕ¼¾ÝµÄ×Ö½Ú¸öÊý
+#define COMMAND_TERMINATOR_LEN 1//FF´®¿Ú16½øÖÆÃüÁî¸ñÊ½ÖÐ´ú±íÃüÁî½áÊø·ûÕ¼¾ÝµÄ×Ö½Ú¸öÊý
 #define CMD_CHANGE_DEVICEID 0x01
 #define CMD_CHECK_DEVICEID 0x02
 #define CMD_CHECK_STATUS 0X03
@@ -36,5 +38,26 @@ void savematrixstatus(int index);
 void handle_ctl_cmd(Ctl_Cmd_Info* cmd_info);
 
 void init_etimer(void);
+int parse_cmd_progress(Ctl_Cmd_Info* cmd_info);
+#ifdef __cplusplus
+ extern "C"
+{
+ #endif
+int parse_ascii_cmd(char * Buffer_Data,int lenth,char *sbuf);
+//#ifdef __cplusplus
+
+//}
+ //#endif
+//#ifdef __cplusplus
+ //extern "C"
+//{
+ //#endif
+
+int parse_status_cmd(char * Buffer_Data,int lenth,char *sbuf);
+int checkcommand(char * buf,int lenth);
+#ifdef __cplusplus
+
+}
+ #endif
 
 #endif

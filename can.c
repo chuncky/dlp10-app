@@ -1377,7 +1377,7 @@ void * candata_receive_process(void* arg)
 			continue;
 		}		
 		Write_Cmd_FIFO((u8 *)Rx_frame.data,Rx_frame.can_dlc,&COM2_CAN_FIFO);
-                //usleep(1000);
+                //usleep(100);
 	}
 
 }
@@ -1473,7 +1473,7 @@ void CAN_proc_rs_State(void)
 			CAN_Transmit(s[0],&frame);
 			len -= tmp;
 			//delay_ms(8);
-			//usleep(1000);
+			usleep(1000);
 
 			
 		}

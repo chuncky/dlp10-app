@@ -45,7 +45,7 @@ u8 Write_Cmd_FIFO(u8 *pSource,u32 WriteLength,__FIFO * fifo_ptr)
 
     u32 i;
 //printf("%s-01\n",__func__);
-    pthread_rwlock_wrlock(&(fifo_ptr->rwlock));
+    //pthread_rwlock_wrlock(&(fifo_ptr->rwlock));
     for (i = 0; i < WriteLength; i++)
     {
         //OS_ENTER_CRITICAL();
@@ -59,7 +59,7 @@ u8 Write_Cmd_FIFO(u8 *pSource,u32 WriteLength,__FIFO * fifo_ptr)
 	}
 		//OS_EXIT_CRITICAL();	  //恢复全局中断标志			
      }
-     pthread_rwlock_unlock(&(fifo_ptr->rwlock));
+     //pthread_rwlock_unlock(&(fifo_ptr->rwlock));
 //printf("%s-02\n",__func__);
     return i;
 }
@@ -70,7 +70,7 @@ u8 Read_Cmd_FIFO(u8 *pAim,u32 ReadLength,__FIFO * fifo_ptr)
 //printf("%s-01\n",__func__);
 
     u32 i;
-    pthread_rwlock_rdlock(&(fifo_ptr->rwlock));
+    //pthread_rwlock_rdlock(&(fifo_ptr->rwlock));
     for (i = 0; i < ReadLength; i++)
     {
 		if (fifo_ptr->Enteres <= 0)
@@ -94,7 +94,7 @@ u8 Read_Cmd_FIFO(u8 *pAim,u32 ReadLength,__FIFO * fifo_ptr)
 
 		//OS_EXIT_CRITICAL();	  //恢复全局中断标志		
 	}
-	pthread_rwlock_unlock(&(fifo_ptr->rwlock));
+	//pthread_rwlock_unlock(&(fifo_ptr->rwlock));
 //printf("%s-03\n",__func__);
 	return i;
 }
