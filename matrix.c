@@ -1362,7 +1362,7 @@ int parse_status_cmd(char * Buffer_Data,int lenth,char *sbuf)
   					len=sprintf(pbuf,"%s", DEVICE_NAME);
 				len=len+2;
 				sbuf[len]='\0';
-				printf("%s--%s\n",__func__,sbuf);
+				//printf("%s--%s\n",__func__,sbuf);
 			}
 			return len;
 			break;

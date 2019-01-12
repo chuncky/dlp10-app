@@ -98,7 +98,7 @@ void * main_process(void* arg)
 		handle_ctl_cmd(&uart2_can_info);
 		//handle_ctl_cmd(&udp_info);
 		timerprocess();
-		usleep(1000); //10ms
+		usleep(10000); //10ms
 		//printf("%s-01\n",__func__);
 	}
 

@@ -60,7 +60,7 @@ void * udpprocess(void* arg)
         			datagramSocket.sendTo("Command error",13,sender);
 				continue;
 			}
-			//printf("receive data: %s\n",buffer);
+			//printf("%s-01,receive data: %s\n",__func__,buffer);
 			if(buffer[0]==BATCHCMDSTR_STARTCHAR){
 				ret=parse_status_cmd(buffer,n,sendbuf);
 			}
@@ -68,13 +68,17 @@ void * udpprocess(void* arg)
 			{
 				ret=parse_ascii_cmd(buffer,n,sendbuf);
 			}
-			if (ret==0){
+			//printf("\n %s-02,send data: ret=%d,%s\n",__func__,ret,(sendbuf+5));
+
+			if (ret<=0){
 				datagramSocket.sendTo("OK",2,sender);
+				//printf("\n %s-03\n",__func__);
 			}
-			else if(ret<0)
-				datagramSocket.sendTo("Error",5,sender);
-			else 
-				datagramSocket.sendTo(sendbuf,ret,sender);	
+			else
+			{
+				datagramSocket.sendTo(sendbuf,ret,sender);
+				//printf("\n %s-04\n",__func__);	
+			}
 			//Write_Cmd_FIFO(buffer,n,&UDPFIFO);
 		}
 		else{

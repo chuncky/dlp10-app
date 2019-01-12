@@ -1366,7 +1366,7 @@ void * candata_receive_process(void* arg)
 			printf("read error !! \n");
 		}
 		//printf("can0 received %d datas\n",ret);
-		//printf("\n CAN0 receive dlc = %d\n", Rx_frame.can_dlc);
+		//printf("CAN0 receive dlc = %d\n", Rx_frame.can_dlc);
 		//printf("CAN0 receive Data: ");
 		if(Rx_frame.can_id==18){
 			//printf("CAN0 receive id = %d\n", Rx_frame.can_id);
@@ -1375,9 +1375,15 @@ void * candata_receive_process(void* arg)
 			//}
 			//printf("\n");
 			continue;
-		}		
+		}
+		//printf("CAN0 receive dlc = %d\n", Rx_frame.can_dlc);
+		if(Rx_frame.can_dlc !=8){
+
+			//printf("%s-01,dlc=%d\n",__func__,Rx_frame.can_dlc);
+
+		}
 		Write_Cmd_FIFO((u8 *)Rx_frame.data,Rx_frame.can_dlc,&COM2_CAN_FIFO);
-                //usleep(100);
+                //usleep(1000);
 	}
 
 }
@@ -1436,6 +1442,7 @@ void CAN_proc_rs_State(void)
 
 //printf("%s:iMax_Output_Num=%d,INDEX_MACHINE_ID=%d\n",__func__,iMax_Output_Num,INDEX_MACHINE_ID);
 
+
 #if 0
 		TxMessage.StdId=SEND_ID_SELF;
 
@@ -1473,7 +1480,7 @@ void CAN_proc_rs_State(void)
 			CAN_Transmit(s[0],&frame);
 			len -= tmp;
 			//delay_ms(8);
-			usleep(1000);
+			//usleep(1000);
 
 			
 		}
@@ -1490,7 +1497,7 @@ void can_send_data(u8 *ptr,u16 len)
 {
 		//CanTxMsg TxMessage;
 		struct can_frame frame;
-//printf("%s-01:len=%d\n",__func__,len);
+		//printf("%s-01:len=%d\n",__func__,len);
 		unsigned char i = 0;
 		unsigned char tmp = 0;
 		unsigned char j = 0;
